@@ -2,348 +2,323 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Inter, Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
   color: white;
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.8s ease;
+  background: #111;
 }
 
-.overlay {
+/* BACKGROUND */
+#backgroundLayer {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.5s ease-in-out;
+  z-index: -3;
+}
+
+.darkOverlay {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 45%),
-    linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.7));
-  z-index: -1;
+    linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)),
+    radial-gradient(circle, rgba(255,255,255,0.08), rgba(0,0,0,0.4));
+  z-index: -2;
 }
 
-header {
+/* TOP LEFT GOAL */
+.goalArea {
   position: fixed;
   top: 24px;
   left: 24px;
-  right: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 5;
-}
-
-.goal-box {
   display: flex;
   gap: 10px;
+  z-index: 20;
   padding: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.14);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.25);
 }
 
-.goal-box input {
-  width: 240px;
+.goalArea input {
+  width: 250px;
   background: transparent;
   border: none;
   outline: none;
   color: white;
-  padding: 10px 14px;
   font-size: 15px;
+  padding: 10px;
 }
 
-.goal-box input::placeholder {
+.goalArea input::placeholder {
   color: rgba(255,255,255,0.75);
 }
 
+/* BUTTONS */
 button {
-  border: none;
   cursor: pointer;
   color: white;
-  background: rgba(255,255,255,0.16);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.32);
+  padding: 11px 18px;
   border-radius: 999px;
-  padding: 10px 18px;
-  transition: 0.25s ease;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(12px);
+  transition: 0.2s ease;
+  font-weight: 600;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.26);
+  background: rgba(255,255,255,0.32);
+  transform: scale(1.05);
 }
 
-.calendar-btn {
-  font-size: 15px;
-  padding: 14px 22px;
-}
-
-main {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-}
-
-.timer-card {
-  text-align: center;
-  padding: 44px;
-  border-radius: 38px;
-  background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.18);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
-  backdrop-filter: blur(20px);
-}
-
-.goal-display {
-  min-height: 32px;
-  margin-bottom: 16px;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.time-picker {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.time-picker input {
-  width: 90px;
-  text-align: center;
-  font-size: 22px;
-  padding: 10px;
-  border-radius: 18px;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.12);
-  outline: none;
-}
-
-.timer-display {
-  font-size: clamp(68px, 12vw, 170px);
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -5px;
-  text-shadow: 0 10px 35px rgba(0,0,0,0.45);
-}
-
-.timer-buttons {
-  margin-top: 32px;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-}
-
-.bg-arrow {
+/* TOP RIGHT CALENDAR */
+.calendarToggle {
   position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 58px;
-  height: 58px;
-  font-size: 42px;
-  display: grid;
-  place-items: center;
-  z-index: 4;
-}
-
-.bg-arrow:hover {
-  transform: translateY(-50%) scale(1.08);
-}
-
-.bg-arrow.left {
-  left: 24px;
-}
-
-.bg-arrow.right {
-  left: 96px;
-}
-
-.spotify-bar {
-  position: fixed;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  width: min(720px, calc(100% - 40px));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 14px 18px;
-  border-radius: 28px;
-  background: rgba(20,20,20,0.5);
-  border: 1px solid rgba(255,255,255,0.16);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-}
-
-.spotify-bar p {
-  color: rgba(255,255,255,0.7);
-  font-size: 13px;
-}
-
-.music-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.music-controls button {
-  padding: 10px 13px;
-}
-
-.spotify-bar input {
-  width: 130px;
-}
-
-.quote-box {
-  position: fixed;
-  left: 24px;
-  bottom: 34px;
-  width: 320px;
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(18px);
-  font-size: 14px;
-  line-height: 1.5;
-  z-index: 3;
-}
-
-.calendar-panel {
-  position: fixed;
-  top: 90px;
+  top: 24px;
   right: 24px;
-  width: 420px;
+  z-index: 20;
+}
+
+.calendarPanel {
+  position: fixed;
+  top: 82px;
+  right: 24px;
+  width: 430px;
   padding: 22px;
   border-radius: 30px;
-  background: rgba(10,10,20,0.7);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(12, 15, 25, 0.82);
   backdrop-filter: blur(22px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-  z-index: 10;
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+  z-index: 30;
 }
 
 .hidden {
   display: none;
 }
 
-.calendar-header {
+.calendarTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-.calendar-header h2 {
+.calendarTop h2 {
   font-size: 22px;
 }
 
-.calendar-header button {
+#closeCalendar {
   font-size: 24px;
-  padding: 4px 13px;
+  padding: 5px 13px;
 }
 
-.weekday-row,
-.calendar-grid {
+.weekdays,
+.calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 11px;
 }
 
-.weekday-row span {
+.weekdays span {
   text-align: center;
   font-size: 12px;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 6px;
+  opacity: 0.75;
 }
 
-.day-circle {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  margin: auto;
+.dayCircle {
+  width: 43px;
+  height: 43px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,0.9);
-  color: #111;
-  font-weight: 700;
-  transition: 0.25s ease;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.day-circle.today {
-  background: #3b82f6;
-  color: white;
-  box-shadow: 0 0 25px rgba(59,130,246,0.8);
-}
-
-.day-circle:hover {
-  width: 112px;
-  height: 112px;
-  z-index: 20;
   background: white;
   color: #111;
-  font-size: 14px;
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  position: relative;
+  cursor: pointer;
+  margin: auto;
+  transition: 0.25s ease;
+  overflow: hidden;
   text-align: center;
+}
+
+.dayCircle.today {
+  background: #2f80ff;
+  color: white;
+  box-shadow: 0 0 22px rgba(47,128,255,0.9);
+}
+
+.dayCircle:hover {
+  width: 120px;
+  height: 120px;
+  z-index: 50;
+  padding: 10px;
+  font-size: 11px;
   line-height: 1.2;
 }
 
-.day-circle .day-info {
-  display: none;
-  font-size: 10px;
-  font-weight: 500;
-}
-
-.day-circle:hover .day-num {
+.dayCircle .info {
   display: none;
 }
 
-.day-circle:hover .day-info {
+.dayCircle:hover .num {
+  display: none;
+}
+
+.dayCircle:hover .info {
   display: block;
 }
 
-.empty-day {
-  width: 42px;
-  height: 42px;
+.empty {
+  width: 43px;
+  height: 43px;
 }
 
-@media (max-width: 760px) {
-  header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+/* LEFT BACKGROUND ARROWS */
+.backgroundControls {
+  position: fixed;
+  left: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 20;
+}
+
+.backgroundControls button {
+  width: 58px;
+  height: 58px;
+  font-size: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CENTER TIMER */
+.centerTimer {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#goalDisplay {
+  min-height: 42px;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-shadow: 0 8px 22px rgba(0,0,0,0.5);
+}
+
+.timerInputBox {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.timerInputBox input {
+  width: 95px;
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.16);
+  outline: none;
+}
+
+.timerDisplay {
+  font-size: clamp(80px, 13vw, 175px);
+  font-weight: 900;
+  letter-spacing: -6px;
+  color: white;
+  text-shadow: 0 16px 40px rgba(0,0,0,0.65);
+}
+
+.timerButtons {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+/* QUOTE BOTTOM LEFT */
+.quoteBox {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  width: 330px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.24);
+  backdrop-filter: blur(16px);
+  z-index: 20;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* SPOTIFY BOTTOM CENTER */
+.spotifyBar {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(680px, 48vw);
+  z-index: 20;
+  background: rgba(0,0,0,0.35);
+  padding: 8px;
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* MOBILE */
+@media (max-width: 800px) {
+  .goalArea {
+    left: 12px;
+    right: 12px;
+    top: 12px;
   }
 
-  .goal-box input {
+  .goalArea input {
     width: 100%;
   }
 
-  .timer-card {
-    width: calc(100% - 30px);
-    padding: 30px 20px;
+  .calendarToggle {
+    top: 82px;
+    right: 12px;
   }
 
-  .timer-display {
+  .calendarPanel {
+    width: calc(100% - 24px);
+    right: 12px;
+  }
+
+  .backgroundControls {
+    left: 12px;
+  }
+
+  .timerDisplay {
+    font-size: 70px;
     letter-spacing: -2px;
   }
 
-  .quote-box {
+  .quoteBox {
     display: none;
   }
 
-  .spotify-bar {
-    flex-direction: column;
-  }
-
-  .calendar-panel {
-    width: calc(100% - 30px);
-    right: 15px;
+  .spotifyBar {
+    width: calc(100% - 24px);
   }
 }
