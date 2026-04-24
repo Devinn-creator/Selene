@@ -3,77 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Focus Timer</title>
+  <title>Focus Flow Timer</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="overlay"></div>
+  <div id="backgroundLayer"></div>
+  <div class="darkOverlay"></div>
 
-  <header>
-    <div class="goal-box">
-      <input id="goalInput" type="text" placeholder="What are you focusing on?" />
-      <button id="saveGoalBtn">Set Goal</button>
-    </div>
+  <!-- TOP LEFT GOAL -->
+  <div class="goalArea">
+    <input id="goalInput" type="text" placeholder="Enter your timer goal..." />
+    <button id="setGoalBtn">Set</button>
+  </div>
 
-    <button id="calendarBtn" class="calendar-btn">Calendar</button>
-  </header>
+  <!-- TOP RIGHT CALENDAR -->
+  <button id="calendarToggle" class="calendarToggle">Calendar</button>
 
-  <main>
-    <button id="prevBg" class="bg-arrow left">‹</button>
-    <button id="nextBg" class="bg-arrow right">›</button>
-
-    <section class="timer-card">
-      <p id="goalDisplay" class="goal-display"></p>
-
-      <div class="time-picker">
-        <button id="minusFive">−5</button>
-        <input id="customMinutes" type="number" min="1" value="25" />
-        <button id="plusFive">+5</button>
-      </div>
-
-      <div id="timerDisplay" class="timer-display">00:25:00</div>
-
-      <div class="timer-buttons">
-        <button id="startBtn">Start</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="resetBtn">Reset</button>
-      </div>
-    </section>
-  </main>
-
-  <section id="calendarPanel" class="calendar-panel hidden">
-    <div class="calendar-header">
+  <div id="calendarPanel" class="calendarPanel hidden">
+    <div class="calendarTop">
       <h2 id="monthTitle"></h2>
       <button id="closeCalendar">×</button>
     </div>
-    <div class="weekday-row">
-      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-    </div>
-    <div id="calendarGrid" class="calendar-grid"></div>
-  </section>
 
-  <section class="quote-box">
+    <div class="weekdays">
+      <span>Sun</span>
+      <span>Mon</span>
+      <span>Tue</span>
+      <span>Wed</span>
+      <span>Thu</span>
+      <span>Fri</span>
+      <span>Sat</span>
+    </div>
+
+    <div id="calendarGrid" class="calendarGrid"></div>
+  </div>
+
+  <!-- LEFT BACKGROUND SELECTOR -->
+  <div class="backgroundControls">
+    <button id="prevBackground">‹</button>
+    <button id="nextBackground">›</button>
+  </div>
+
+  <!-- CENTER TIMER -->
+  <main class="centerTimer">
+    <h1 id="goalDisplay"></h1>
+
+    <div class="timerInputBox">
+      <button id="minusFive">−5</button>
+      <input id="minuteInput" type="number" min="1" value="25" />
+      <button id="plusFive">+5</button>
+    </div>
+
+    <div id="timerDisplay" class="timerDisplay">00:25:00</div>
+
+    <div class="timerButtons">
+      <button id="startTimer">Start</button>
+      <button id="pauseTimer">Pause</button>
+      <button id="resetTimer">Reset</button>
+    </div>
+  </main>
+
+  <!-- BOTTOM LEFT QUOTE -->
+  <div class="quoteBox">
     <p id="dailyQuote"></p>
-  </section>
+  </div>
 
-  <section class="spotify-bar">
-    <div>
-      <strong>Lofi Focus Radio</strong>
-      <p>Calm beats for deep work</p>
-    </div>
-
-    <div class="music-controls">
-      <button>⏮</button>
-      <button id="playBtn">▶</button>
-      <button>⏭</button>
-    </div>
-
-    <input type="range" min="0" max="100" value="55" />
-  </section>
-
-  <audio id="audioPlayer" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_9460f7b4c2.mp3" type="audio/mpeg">
-  </audio>
+  <!-- BOTTOM SPOTIFY BAR -->
+  <div class="spotifyBar">
+    <iframe
+      style="border-radius:16px"
+      src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
+      width="100%"
+      height="80"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
 
   <script src="script.js"></script>
 </body>
