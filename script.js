@@ -1,107 +1,86 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("FocusFlow app loaded");
+  console.log("SELENE JS LOADED");
 
-  const modes = document.querySelectorAll(".mode");
   const timerDisplay = document.getElementById("timerDisplay");
   const minutesInput = document.getElementById("minutesInput");
   const goalInput = document.getElementById("goalInput");
   const goalDisplay = document.getElementById("goalDisplay");
-  const calendarBtn = document.getElementById("calendarBtn");
   const calendarPanel = document.getElementById("calendarPanel");
-  const closeCalendar = document.getElementById("closeCalendar");
   const calendarGrid = document.getElementById("calendarGrid");
   const monthTitle = document.getElementById("monthTitle");
-  const sessionCount = document.getElementById("sessionCount");
-  const totalMinutes = document.getElementById("totalMinutes");
-  const streakCount = document.getElementById("streakCount");
+  const selectedDateTitle = document.getElementById("selectedDateTitle");
+  const selectedEvents = document.getElementById("selectedEvents");
   const quoteText = document.getElementById("quoteText");
 
-  let activeMinutes = 25;
-  let secondsLeft = activeMinutes * 60;
-  let timer = null;
-  let running = false;
+  let minutes = 25;
+  let secondsLeft = minutes * 60;
+  let interval = null;
 
   const quotes = [
-    "Marcus Aurelius: You have power over your mind — not outside events.",
-    "Seneca: It is not that we have a short time, but that we waste much of it.",
-    "Aristotle: We are what we repeatedly do. Excellence is a habit.",
-    "Socrates: The secret of change is to focus your energy on building the new.",
-    "Epictetus: First say what you would be; then do what you have to do.",
+    "Marcus Aurelius: You have power over your mind, not outside events.",
+    "Seneca: We suffer more often in imagination than in reality.",
+    "Aristotle: Excellence is not an act, but a habit.",
     "Plato: The beginning is the most important part of the work.",
-    "Lao Tzu: The journey of a thousand miles begins with one step.",
-    "Confucius: It does not matter how slowly you go as long as you do not stop."
+    "Epictetus: First say what you would be; then do what you have to do.",
+    "Lao Tzu: The journey of a thousand miles begins with one step."
   ];
 
   function getSessions() {
-    return JSON.parse(localStorage.getItem("focusFlowSessions")) || {};
+    return JSON.parse(localStorage.getItem("seleneSessions")) || {};
   }
 
-  function saveSessions(sessions) {
-    localStorage.setItem("focusFlowSessions", JSON.stringify(sessions));
+  function saveSessions(data) {
+    localStorage.setItem("seleneSessions", JSON.stringify(data));
   }
 
   function todayKey() {
     return new Date().toISOString().split("T")[0];
   }
 
-  function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  function formatTime(total) {
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }
 
   function updateDisplay() {
     timerDisplay.textContent = formatTime(secondsLeft);
   }
 
-  function setTimer(minutes) {
-    clearInterval(timer);
-    timer = null;
-    running = false;
-
-    activeMinutes = Math.max(1, Number(minutes));
-    secondsLeft = activeMinutes * 60;
-    minutesInput.value = activeMinutes;
-
-    document.getElementById("startBtn").textContent = "start";
+  function setTimer(newMinutes) {
+    clearInterval(interval);
+    interval = null;
+    minutes = Math.max(1, Number(newMinutes));
+    secondsLeft = minutes * 60;
+    minutesInput.value = minutes;
     updateDisplay();
   }
 
   function saveSession() {
-    const sessions = getSessions();
+    const data = getSessions();
     const key = todayKey();
 
-    if (!sessions[key]) sessions[key] = [];
+    if (!data[key]) data[key] = [];
 
-    sessions[key].push({
+    data[key].push({
       goal: goalInput.value.trim() || "Focus session",
-      minutes: activeMinutes,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+      minutes: minutes
     });
 
-    saveSessions(sessions);
+    saveSessions(data);
     buildCalendar();
-    updateStats();
   }
 
   function startTimer() {
-    if (running) return;
+    if (interval) return;
 
-    running = true;
-    document.getElementById("startBtn").textContent = "running";
-
-    timer = setInterval(() => {
+    interval = setInterval(() => {
       if (secondsLeft > 0) {
         secondsLeft--;
         updateDisplay();
       } else {
-        clearInterval(timer);
-        timer = null;
-        running = false;
-        document.getElementById("startBtn").textContent = "start";
+        clearInterval(interval);
+        interval = null;
         saveSession();
         alert("Session complete. Saved to calendar.");
       }
@@ -109,45 +88,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function pauseTimer() {
-    clearInterval(timer);
-    timer = null;
-    running = false;
-    document.getElementById("startBtn").textContent = "start";
+    clearInterval(interval);
+    interval = null;
   }
 
   function resetTimer() {
-    setTimer(activeMinutes);
+    setTimer(minutesInput.value);
   }
 
-  function updateStats() {
-    const sessions = getSessions();
-    let count = 0;
-    let minutes = 0;
+  function showDateInfo(key, label) {
+    const data = getSessions();
+    const sessions = data[key] || [];
 
-    Object.values(sessions).forEach(day => {
-      day.forEach(session => {
-        count++;
-        minutes += Number(session.minutes);
-      });
-    });
+    selectedDateTitle.textContent = label;
+    selectedEvents.innerHTML = "";
 
-    sessionCount.textContent = count;
-    totalMinutes.textContent = minutes;
-
-    let streak = 0;
-    const date = new Date();
-
-    while (true) {
-      const key = date.toISOString().split("T")[0];
-      if (sessions[key] && sessions[key].length > 0) {
-        streak++;
-        date.setDate(date.getDate() - 1);
-      } else {
-        break;
-      }
+    if (sessions.length === 0) {
+      selectedEvents.innerHTML = "<li>No events</li>";
+      return;
     }
 
-    streakCount.textContent = streak;
+    sessions.forEach(session => {
+      const li = document.createElement("li");
+      li.textContent = `${session.minutes} min — ${session.goal}`;
+      selectedEvents.appendChild(li);
+    });
   }
 
   function buildCalendar() {
@@ -167,35 +132,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const sessions = getSessions();
+    const data = getSessions();
 
     for (let i = 0; i < firstDay; i++) {
       const empty = document.createElement("div");
-      empty.className = "empty";
       calendarGrid.appendChild(empty);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
       const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      const daySessions = sessions[key] || [];
+      const dateLabel = `${monthNames[month]} ${day}, ${year}`;
 
-      const div = document.createElement("div");
+      const div = document.createElement("button");
       div.className = "day";
+      div.textContent = day;
 
       if (day === today) div.classList.add("today");
-      if (daySessions.length > 0) div.classList.add("has-session");
+      if (data[key] && data[key].length) div.classList.add("has-session");
 
-      const info = daySessions.length
-        ? daySessions.map(s => `${s.minutes}m ${s.goal}`).join(" • ")
-        : "No sessions";
+      div.addEventListener("click", () => {
+        showDateInfo(key, dateLabel);
+      });
 
-      div.innerHTML = `
-        <span class="num">${day}</span>
-        <span class="info">${info}</span>
-      `;
+      div.addEventListener("mouseenter", () => {
+        showDateInfo(key, dateLabel);
+      });
 
       calendarGrid.appendChild(div);
     }
+
+    const todayCalendarKey = todayKey();
+    showDateInfo(todayCalendarKey, `${monthNames[month]} ${today}, ${year}`);
   }
 
   function setQuote() {
@@ -204,46 +171,36 @@ document.addEventListener("DOMContentLoaded", () => {
     quoteText.textContent = quotes[day % quotes.length];
   }
 
-  modes.forEach(mode => {
-    mode.addEventListener("click", () => {
-      modes.forEach(btn => btn.classList.remove("active"));
-      mode.classList.add("active");
-      setTimer(Number(mode.dataset.minutes));
-    });
-  });
+  document.getElementById("startBtn").addEventListener("click", startTimer);
+  document.getElementById("pauseBtn").addEventListener("click", pauseTimer);
+  document.getElementById("resetBtn").addEventListener("click", resetTimer);
 
   document.getElementById("plusFive").addEventListener("click", () => {
     setTimer(Number(minutesInput.value) + 5);
   });
 
   document.getElementById("minusFive").addEventListener("click", () => {
-    setTimer(Math.max(1, Number(minutesInput.value) - 5));
+    setTimer(Number(minutesInput.value) - 5);
   });
 
   minutesInput.addEventListener("change", () => {
-    setTimer(Number(minutesInput.value));
+    setTimer(minutesInput.value);
   });
 
   goalInput.addEventListener("input", () => {
-    const text = goalInput.value.trim();
-    goalDisplay.textContent = text || "Ready to focus?";
+    goalDisplay.textContent = goalInput.value.trim() || "Ready to focus?";
   });
 
-  document.getElementById("startBtn").addEventListener("click", startTimer);
-  document.getElementById("pauseBtn").addEventListener("click", pauseTimer);
-  document.getElementById("resetBtn").addEventListener("click", resetTimer);
-
-  calendarBtn.addEventListener("click", () => {
-    calendarPanel.classList.toggle("hidden");
+  document.getElementById("calendarBtn").addEventListener("click", () => {
+    calendarPanel.classList.remove("hidden");
     buildCalendar();
   });
 
-  closeCalendar.addEventListener("click", () => {
+  document.getElementById("closeCalendar").addEventListener("click", () => {
     calendarPanel.classList.add("hidden");
   });
 
   updateDisplay();
   buildCalendar();
-  updateStats();
   setQuote();
 });
