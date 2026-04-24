@@ -1,123 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Selene | Timer & Planning</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenSpace | Time Management</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app" class="app">
-    <div class="shade"></div>
-
-    <header class="topbar">
-      <div class="goal-box">
-        <label for="goalInput">Timer Goal</label>
-        <input id="goalInput" type="text" placeholder="What are you working on?" maxlength="80" />
-      </div>
-
-      <button id="calendarToggle" class="glass-btn">Calendar</button>
+    <div id="bg-overlay"></div>
+    
+    <header>
+        <div class="goal-container">
+            <input type="text" id="goalInput" placeholder="Enter your goal...">
+            <div id="goalDisplay" class="hidden"></div>
+        </div>
+        
+        <div class="calendar-container">
+            <div id="calendar-track">
+                </div>
+        </div>
     </header>
 
-    <aside class="background-switcher">
-      <button id="prevBg" aria-label="Previous background">‹</button>
-      <span id="bgName">Aurora Lake</span>
-      <button id="nextBg" aria-label="Next background">›</button>
-    </aside>
+    <nav class="bg-selector">
+        <button id="prevBg" class="arrow">❮</button>
+        <button id="nextBg" class="arrow">❯</button>
+    </nav>
 
-    <main class="timer-screen">
-      <p id="activeGoal" class="active-goal"></p>
-
-      <section class="timer-card">
-        <div id="countdown" class="countdown">00:25:00</div>
-
-        <div class="time-controls">
-          <button id="minusFive">−5</button>
-          <input id="manualMinutes" type="number" min="1" max="600" value="25" />
-          <button id="plusFive">+5</button>
-          <span>minutes</span>
+    <main class="timer-section">
+        <h2 id="activeGoal"></h2>
+        <div id="timerDisplay">00:00:00</div>
+        
+        <div class="controls">
+            <div class="manual-input">
+                <button class="step-btn" onclick="adjustTime(-5)">-5m</button>
+                <input type="number" id="manualHours" placeholder="HH" min="0" max="23">
+                <input type="number" id="manualMins" placeholder="MM" min="0" max="59">
+                <input type="number" id="manualSecs" placeholder="SS" min="0" max="59">
+                <button class="step-btn" onclick="adjustTime(5)">+5m</button>
+            </div>
+            <div class="action-btns">
+                <button id="startBtn">Start</button>
+                <button id="resetBtn">Reset</button>
+            </div>
         </div>
-
-        <div class="timer-actions">
-          <button id="startPauseBtn" class="primary">Start</button>
-          <button id="resetBtn">Reset</button>
-          <button id="saveSessionBtn">Save Session</button>
-        </div>
-      </section>
     </main>
 
-    <section class="quote-card">
-      <p id="dailyQuote">“The impediment to action advances action.”</p>
-      <span id="quoteAuthor">Marcus Aurelius</span>
-    </section>
-
-    <section class="spotify-bar">
-      <div>
-        <strong>Lofi Beats</strong>
-        <p>Embedded Spotify player</p>
-      </div>
-      <iframe
-        title="Spotify lofi beats"
-        src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
-        width="100%"
-        height="80"
-        frameborder="0"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
-      </iframe>
-    </section>
-
-    <section id="calendarPanel" class="calendar-panel hidden">
-      <div class="calendar-header">
-        <div>
-          <h2>Planning Calendar</h2>
-          <p id="monthLabel"></p>
+    <footer>
+        <div class="quote-container">
+            <p id="philosophyQuote">"Waste no more time arguing what a good man should be. Be one."</p>
+            <span id="philosopher">— Marcus Aurelius</span>
         </div>
-        <button id="closeCalendar" class="glass-btn">Close</button>
-      </div>
 
-      <div class="planner-inputs">
-        <textarea id="lifeSchedule" placeholder="Describe your daily schedule. Example: school 8-3, gym 5-6, dinner 7..."></textarea>
-        <textarea id="goalPlan" placeholder="Describe your goal. Example: learn JavaScript in 8 weeks..."></textarea>
-        <input id="importantDate" type="date" />
-        <input id="importantDateText" type="text" placeholder="Important date note" />
-        <button id="generatePlan" class="primary">Generate Healthy Plan</button>
-        <button id="addImportantDate">Add Date</button>
-      </div>
-
-      <div class="view-tabs">
-        <button id="dotsViewBtn" class="active">Dot Month View</button>
-        <button id="weekViewBtn">Weekly View</button>
-      </div>
-
-      <div class="today-summary">
-        <div>
-          <h3>Today’s Summary</h3>
-          <p id="todaySummaryText">No plan yet. Add a goal or save a timer session.</p>
+        <div class="spotify-bar">
+            <iframe id="spotify-player" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExYv" 
+                    width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
         </div>
-        <div>
-          <h3>Daily Affirmation</h3>
-          <input id="affirmationInput" type="text" placeholder="I am consistent and focused." />
-          <p id="affirmationDisplay"></p>
-        </div>
-        <div class="wisdom-box">
-          <h3>Daily Wisdom</h3>
-          <p id="wisdomText"></p>
-        </div>
-      </div>
+    </footer>
 
-      <div id="dotsView" class="calendar-dots"></div>
-
-      <div id="coverFlow" class="cover-flow">
-        <button id="prevDay">‹</button>
-        <div id="dayCard" class="day-card"></div>
-        <button id="nextDay">›</button>
-      </div>
-
-      <div id="weekView" class="week-view hidden"></div>
-    </section>
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
