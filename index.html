@@ -1,62 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenSpace | Time Management</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Timer</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div id="bg-overlay"></div>
-    
-    <header>
-        <div class="goal-container">
-            <input type="text" id="goalInput" placeholder="Enter your goal...">
-            <div id="goalDisplay" class="hidden"></div>
-        </div>
-        
-        <div class="calendar-container">
-            <div id="calendar-track">
-                </div>
-        </div>
-    </header>
+  <div class="overlay"></div>
 
-    <nav class="bg-selector">
-        <button id="prevBg" class="arrow">❮</button>
-        <button id="nextBg" class="arrow">❯</button>
-    </nav>
+  <header>
+    <div class="goal-box">
+      <input id="goalInput" type="text" placeholder="What are you focusing on?" />
+      <button id="saveGoalBtn">Set Goal</button>
+    </div>
 
-    <main class="timer-section">
-        <h2 id="activeGoal"></h2>
-        <div id="timerDisplay">00:00:00</div>
-        
-        <div class="controls">
-            <div class="manual-input">
-                <button class="step-btn" onclick="adjustTime(-5)">-5m</button>
-                <input type="number" id="manualHours" placeholder="HH" min="0" max="23">
-                <input type="number" id="manualMins" placeholder="MM" min="0" max="59">
-                <input type="number" id="manualSecs" placeholder="SS" min="0" max="59">
-                <button class="step-btn" onclick="adjustTime(5)">+5m</button>
-            </div>
-            <div class="action-btns">
-                <button id="startBtn">Start</button>
-                <button id="resetBtn">Reset</button>
-            </div>
-        </div>
-    </main>
+    <button id="calendarBtn" class="calendar-btn">Calendar</button>
+  </header>
 
-    <footer>
-        <div class="quote-container">
-            <p id="philosophyQuote">"Waste no more time arguing what a good man should be. Be one."</p>
-            <span id="philosopher">— Marcus Aurelius</span>
-        </div>
+  <main>
+    <button id="prevBg" class="bg-arrow left">‹</button>
+    <button id="nextBg" class="bg-arrow right">›</button>
 
-        <div class="spotify-bar">
-            <iframe id="spotify-player" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExYv" 
-                    width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-        </div>
-    </footer>
+    <section class="timer-card">
+      <p id="goalDisplay" class="goal-display"></p>
 
-    <script src="script.js"></script>
+      <div class="time-picker">
+        <button id="minusFive">−5</button>
+        <input id="customMinutes" type="number" min="1" value="25" />
+        <button id="plusFive">+5</button>
+      </div>
+
+      <div id="timerDisplay" class="timer-display">00:25:00</div>
+
+      <div class="timer-buttons">
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </section>
+  </main>
+
+  <section id="calendarPanel" class="calendar-panel hidden">
+    <div class="calendar-header">
+      <h2 id="monthTitle"></h2>
+      <button id="closeCalendar">×</button>
+    </div>
+    <div class="weekday-row">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+  </section>
+
+  <section class="quote-box">
+    <p id="dailyQuote"></p>
+  </section>
+
+  <section class="spotify-bar">
+    <div>
+      <strong>Lofi Focus Radio</strong>
+      <p>Calm beats for deep work</p>
+    </div>
+
+    <div class="music-controls">
+      <button>⏮</button>
+      <button id="playBtn">▶</button>
+      <button>⏭</button>
+    </div>
+
+    <input type="range" min="0" max="100" value="55" />
+  </section>
+
+  <audio id="audioPlayer" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_9460f7b4c2.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="script.js"></script>
 </body>
 </html>
