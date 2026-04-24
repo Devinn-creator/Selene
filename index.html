@@ -1,60 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Selene</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusFlow</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-<div id="bg"></div>
+  <header class="app-header">
+    <div>
+      <h1>FocusFlow</h1>
+      <p>Plan your focus. Track your time.</p>
+    </div>
 
-<header>
-  <h1>FlowPlanner</h1>
+    <button id="calendarBtn" class="icon-btn">Calendar</button>
+  </header>
 
-  <div class="goal-row">
-    <input id="goalInput" placeholder="Enter goal..." />
-    <button id="setGoal">Add</button>
-  </div>
-</header>
+  <main class="app">
 
-<!-- TIMER CENTER -->
-<div class="timer">
-  <h2 id="goalDisplay"></h2>
+    <section class="timer-card">
 
-  <div class="time-input">
-    <button id="minus">−5</button>
-    <input id="minutes" type="number" value="25">
-    <button id="plus">+5</button>
-  </div>
+      <div class="mode-row">
+        <button class="mode active" data-minutes="25">pomodoro</button>
+        <button class="mode" data-minutes="5">short break</button>
+        <button class="mode" data-minutes="15">long break</button>
+      </div>
 
-  <div id="time">00:25:00</div>
+      <input id="goalInput" class="goal-input" placeholder="What are you focusing on?" />
 
-  <div class="controls">
-    <button id="start">Start</button>
-    <button id="pause">Pause</button>
-    <button id="reset">Reset</button>
-  </div>
-</div>
+      <h2 id="goalDisplay">Ready to focus?</h2>
 
-<!-- BACKGROUND -->
-<div class="bg-controls">
-  <button id="prev">‹</button>
-  <button id="next">›</button>
-</div>
+      <div id="timerDisplay" class="timer-display">25:00</div>
 
-<!-- CALENDAR -->
-<div class="calendar">
-  <div id="grid"></div>
-</div>
+      <div class="custom-row">
+        <button id="minusFive">−5</button>
+        <input id="minutesInput" type="number" min="1" value="25" />
+        <button id="plusFive">+5</button>
+      </div>
 
-<!-- SPOTIFY -->
-<div class="spotify">
-<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS"
-width="100%" height="80"></iframe>
-</div>
+      <div class="control-row">
+        <button id="startBtn" class="main-btn">start</button>
+        <button id="pauseBtn">pause</button>
+        <button id="resetBtn">reset</button>
+      </div>
 
-<script src="script.js"></script>
+      <div class="stats-row">
+        <div>
+          <span id="sessionCount">0</span>
+          <p>sessions</p>
+        </div>
+        <div>
+          <span id="totalMinutes">0</span>
+          <p>minutes</p>
+        </div>
+        <div>
+          <span id="streakCount">0</span>
+          <p>day streak</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <section id="calendarPanel" class="calendar-panel hidden">
+    <div class="calendar-top">
+      <h2 id="monthTitle">Calendar</h2>
+      <button id="closeCalendar">×</button>
+    </div>
+
+    <div class="weekdays">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+      <span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+
+    <div id="calendarGrid" class="calendar-grid"></div>
+  </section>
+
+  <aside class="quote-box">
+    <p id="quoteText"></p>
+  </aside>
+
+  <section class="spotify-box">
+    <iframe
+      src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
+      width="100%"
+      height="80"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
