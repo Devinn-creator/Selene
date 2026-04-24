@@ -1,324 +1,126 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 body {
-  height: 100vh;
-  overflow: hidden;
-  color: white;
-  background: #111;
+  margin:0;
+  font-family: Arial;
+  background:#0b1220;
+  color:white;
 }
 
 /* BACKGROUND */
-#backgroundLayer {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.5s ease-in-out;
-  z-index: -3;
+#bg {
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  z-index:-1;
+  opacity:.3;
 }
 
-.darkOverlay {
-  position: fixed;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)),
-    radial-gradient(circle, rgba(255,255,255,0.08), rgba(0,0,0,0.4));
-  z-index: -2;
+/* HEADER */
+header {
+  padding:40px 80px;
 }
 
-/* TOP LEFT GOAL */
-.goalArea {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  display: flex;
-  gap: 10px;
-  z-index: 20;
-  padding: 10px;
-  border-radius: 22px;
-  background: rgba(255,255,255,0.14);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.25);
+h1 {
+  font-size:40px;
+  margin-bottom:20px;
 }
 
-.goalArea input {
-  width: 250px;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: white;
-  font-size: 15px;
-  padding: 10px;
+.goal-row {
+  display:flex;
+  gap:10px;
 }
 
-.goalArea input::placeholder {
-  color: rgba(255,255,255,0.75);
+input {
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#1b2a3a;
+  color:white;
 }
 
-/* BUTTONS */
 button {
-  cursor: pointer;
-  color: white;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.32);
-  padding: 11px 18px;
-  border-radius: 999px;
-  backdrop-filter: blur(12px);
-  transition: 0.2s ease;
-  font-weight: 600;
+  background:#22c55e;
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-button:hover {
-  background: rgba(255,255,255,0.32);
-  transform: scale(1.05);
+/* TIMER */
+.timer-section {
+  text-align:center;
+  margin-top:40px;
 }
 
-/* TOP RIGHT CALENDAR */
-.calendarToggle {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 20;
+#time {
+  font-size:80px;
+  margin:20px 0;
 }
 
-.calendarPanel {
-  position: fixed;
-  top: 82px;
-  right: 24px;
-  width: 430px;
-  padding: 22px;
-  border-radius: 30px;
-  background: rgba(12, 15, 25, 0.82);
-  backdrop-filter: blur(22px);
-  border: 1px solid rgba(255,255,255,0.22);
-  box-shadow: 0 25px 70px rgba(0,0,0,0.45);
-  z-index: 30;
+.time-controls {
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-.hidden {
-  display: none;
+.controls {
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-.calendarTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
+/* BACKGROUND ARROWS */
+.bg-controls {
+  position:fixed;
+  left:40px;
+  top:50%;
 }
 
-.calendarTop h2 {
-  font-size: 22px;
+.bg-controls button {
+  font-size:30px;
+  display:block;
+  margin:10px;
 }
 
-#closeCalendar {
-  font-size: 24px;
-  padding: 5px 13px;
+/* CALENDAR */
+.calendar {
+  margin-top:40px;
+  display:flex;
+  justify-content:center;
 }
 
-.weekdays,
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 11px;
+#grid {
+  display:grid;
+  grid-template-columns:repeat(7,60px);
+  gap:20px;
 }
 
-.weekdays span {
-  text-align: center;
-  font-size: 12px;
-  opacity: 0.75;
+.day {
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#1e293b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
 }
 
-.dayCircle {
-  width: 43px;
-  height: 43px;
-  border-radius: 50%;
-  background: white;
-  color: #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  position: relative;
-  cursor: pointer;
-  margin: auto;
-  transition: 0.25s ease;
-  overflow: hidden;
-  text-align: center;
+.day.today {
+  background:#22c55e;
 }
 
-.dayCircle.today {
-  background: #2f80ff;
-  color: white;
-  box-shadow: 0 0 22px rgba(47,128,255,0.9);
+.day:hover {
+  transform:scale(1.3);
+  background:white;
+  color:black;
 }
 
-.dayCircle:hover {
-  width: 120px;
-  height: 120px;
-  z-index: 50;
-  padding: 10px;
-  font-size: 11px;
-  line-height: 1.2;
-}
-
-.dayCircle .info {
-  display: none;
-}
-
-.dayCircle:hover .num {
-  display: none;
-}
-
-.dayCircle:hover .info {
-  display: block;
-}
-
-.empty {
-  width: 43px;
-  height: 43px;
-}
-
-/* LEFT BACKGROUND ARROWS */
-.backgroundControls {
-  position: fixed;
-  left: 26px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 12px;
-  z-index: 20;
-}
-
-.backgroundControls button {
-  width: 58px;
-  height: 58px;
-  font-size: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* CENTER TIMER */
-.centerTimer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-#goalDisplay {
-  min-height: 42px;
-  font-size: 28px;
-  margin-bottom: 20px;
-  text-shadow: 0 8px 22px rgba(0,0,0,0.5);
-}
-
-.timerInputBox {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 25px;
-}
-
-.timerInputBox input {
-  width: 95px;
-  text-align: center;
-  font-size: 24px;
-  color: white;
-  padding: 10px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.16);
-  outline: none;
-}
-
-.timerDisplay {
-  font-size: clamp(80px, 13vw, 175px);
-  font-weight: 900;
-  letter-spacing: -6px;
-  color: white;
-  text-shadow: 0 16px 40px rgba(0,0,0,0.65);
-}
-
-.timerButtons {
-  display: flex;
-  gap: 16px;
-  margin-top: 30px;
-}
-
-/* QUOTE BOTTOM LEFT */
-.quoteBox {
-  position: fixed;
-  left: 24px;
-  bottom: 24px;
-  width: 330px;
-  padding: 18px;
-  border-radius: 22px;
-  background: rgba(255,255,255,0.14);
-  border: 1px solid rgba(255,255,255,0.24);
-  backdrop-filter: blur(16px);
-  z-index: 20;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* SPOTIFY BOTTOM CENTER */
-.spotifyBar {
-  position: fixed;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(680px, 48vw);
-  z-index: 20;
-  background: rgba(0,0,0,0.35);
-  padding: 8px;
-  border-radius: 22px;
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,0.18);
-}
-
-/* MOBILE */
-@media (max-width: 800px) {
-  .goalArea {
-    left: 12px;
-    right: 12px;
-    top: 12px;
-  }
-
-  .goalArea input {
-    width: 100%;
-  }
-
-  .calendarToggle {
-    top: 82px;
-    right: 12px;
-  }
-
-  .calendarPanel {
-    width: calc(100% - 24px);
-    right: 12px;
-  }
-
-  .backgroundControls {
-    left: 12px;
-  }
-
-  .timerDisplay {
-    font-size: 70px;
-    letter-spacing: -2px;
-  }
-
-  .quoteBox {
-    display: none;
-  }
-
-  .spotifyBar {
-    width: calc(100% - 24px);
-  }
+/* SPOTIFY */
+.spotify {
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:500px;
 }
