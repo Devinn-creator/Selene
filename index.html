@@ -3,79 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FocusFlow</title>
+  <title>Selene</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <header class="app-header">
-    <div>
-      <h1>FocusFlow</h1>
-      <p>Plan your focus. Track your time.</p>
-    </div>
-
-    <button id="calendarBtn" class="icon-btn">Calendar</button>
+  <header class="topbar">
+    <h1>Selene</h1>
+    <button id="calendarBtn">Calendar</button>
   </header>
 
-  <main class="app">
+  <main class="timer-wrap">
+    <input id="goalInput" placeholder="What are you focusing on?" />
 
-    <section class="timer-card">
+    <h2 id="goalDisplay">Ready to focus?</h2>
 
-      <div class="mode-row">
-        <button class="mode active" data-minutes="25">pomodoro</button>
-        <button class="mode" data-minutes="5">short break</button>
-        <button class="mode" data-minutes="15">long break</button>
-      </div>
+    <div id="timerDisplay">25:00</div>
 
-      <input id="goalInput" class="goal-input" placeholder="What are you focusing on?" />
+    <div class="time-row">
+      <button id="minusFive">−5</button>
+      <input id="minutesInput" type="number" min="1" value="25" />
+      <button id="plusFive">+5</button>
+    </div>
 
-      <h2 id="goalDisplay">Ready to focus?</h2>
-
-      <div id="timerDisplay" class="timer-display">25:00</div>
-
-      <div class="custom-row">
-        <button id="minusFive">−5</button>
-        <input id="minutesInput" type="number" min="1" value="25" />
-        <button id="plusFive">+5</button>
-      </div>
-
-      <div class="control-row">
-        <button id="startBtn" class="main-btn">start</button>
-        <button id="pauseBtn">pause</button>
-        <button id="resetBtn">reset</button>
-      </div>
-
-      <div class="stats-row">
-        <div>
-          <span id="sessionCount">0</span>
-          <p>sessions</p>
-        </div>
-        <div>
-          <span id="totalMinutes">0</span>
-          <p>minutes</p>
-        </div>
-        <div>
-          <span id="streakCount">0</span>
-          <p>day streak</p>
-        </div>
-      </div>
-
-    </section>
-
+    <div class="button-row">
+      <button id="startBtn">Start</button>
+      <button id="pauseBtn">Pause</button>
+      <button id="resetBtn">Reset</button>
+    </div>
   </main>
 
   <section id="calendarPanel" class="calendar-panel hidden">
-    <div class="calendar-top">
-      <h2 id="monthTitle">Calendar</h2>
+    <div class="calendar-head">
+      <h2 id="monthTitle"></h2>
       <button id="closeCalendar">×</button>
     </div>
 
-    <div class="weekdays">
-      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
-      <span>Thu</span><span>Fri</span><span>Sat</span>
-    </div>
-
     <div id="calendarGrid" class="calendar-grid"></div>
+
+    <div class="event-card">
+      <h3 id="selectedDateTitle"></h3>
+      <ul id="selectedEvents"></ul>
+    </div>
   </section>
 
   <aside class="quote-box">
@@ -86,7 +55,7 @@
     <iframe
       src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
       width="100%"
-      height="80"
+      height="152"
       frameborder="0"
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
       loading="lazy">
