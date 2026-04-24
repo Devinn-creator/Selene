@@ -1,81 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlowPlanner Timer</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<title>FlowPlanner</title>
+<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <div id="bg"></div>
-  <div class="overlay"></div>
 
-  <header class="topbar">
-    <div>
-      <h1>FlowPlanner</h1>
-      <div class="goal-row">
-        <input id="goalInput" type="text" placeholder="Enter goal for this timer..." />
-        <button id="setGoalBtn">Set Goal</button>
-      </div>
-    </div>
+<div id="bg"></div>
 
-    <button id="calendarBtn" class="pill-btn">Calendar</button>
-  </header>
+<header>
+  <h1>FlowPlanner</h1>
 
-  <main class="main-layout">
-    <div class="bg-arrows">
-      <button id="prevBg">‹</button>
-      <button id="nextBg">›</button>
-    </div>
+  <div class="goal-row">
+    <input id="goalInput" placeholder="Enter goal..." />
+    <button id="setGoal">Add</button>
+  </div>
+</header>
 
-    <section class="timer-card">
-      <p id="goalDisplay" class="goal-display">Ready to focus?</p>
+<!-- TIMER CENTER -->
+<div class="timer">
+  <h2 id="goalDisplay"></h2>
 
-      <div class="minute-controls">
-        <button id="minusFive">−5</button>
-        <input id="minuteInput" type="number" min="1" value="25" />
-        <button id="plusFive">+5</button>
-      </div>
+  <div class="time-input">
+    <button id="minus">−5</button>
+    <input id="minutes" type="number" value="25">
+    <button id="plus">+5</button>
+  </div>
 
-      <div id="timerDisplay" class="timer-display">00:25:00</div>
+  <div id="time">00:25:00</div>
 
-      <div class="timer-buttons">
-        <button id="startBtn">Start</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="resetBtn">Reset</button>
-      </div>
-    </section>
+  <div class="controls">
+    <button id="start">Start</button>
+    <button id="pause">Pause</button>
+    <button id="reset">Reset</button>
+  </div>
+</div>
 
-    <section id="calendarPanel" class="calendar-panel hidden">
-      <div class="calendar-head">
-        <h2 id="monthTitle">Calendar</h2>
-        <button id="closeCalendar">×</button>
-      </div>
+<!-- BACKGROUND -->
+<div class="bg-controls">
+  <button id="prev">‹</button>
+  <button id="next">›</button>
+</div>
 
-      <div class="weekdays">
-        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
-        <span>Thu</span><span>Fri</span><span>Sat</span>
-      </div>
+<!-- CALENDAR -->
+<div class="calendar">
+  <div id="grid"></div>
+</div>
 
-      <div id="calendarGrid" class="calendar-grid"></div>
-    </section>
-  </main>
+<!-- SPOTIFY -->
+<div class="spotify">
+<iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS"
+width="100%" height="80"></iframe>
+</div>
 
-  <aside class="quote-box">
-    <p id="quoteText"></p>
-  </aside>
-
-  <section class="spotify-bar">
-    <iframe
-      src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
-      width="100%"
-      height="80"
-      frameborder="0"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy">
-    </iframe>
-  </section>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
