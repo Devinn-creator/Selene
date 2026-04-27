@@ -1,206 +1,316 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("SELENE JS LOADED");
+const SUPABASE_URL = "https://kjlvwptfpyeknffciuyd.supabase.co";
 
-  const timerDisplay = document.getElementById("timerDisplay");
-  const minutesInput = document.getElementById("minutesInput");
-  const goalInput = document.getElementById("goalInput");
-  const goalDisplay = document.getElementById("goalDisplay");
-  const calendarPanel = document.getElementById("calendarPanel");
-  const calendarGrid = document.getElementById("calendarGrid");
-  const monthTitle = document.getElementById("monthTitle");
-  const selectedDateTitle = document.getElementById("selectedDateTitle");
-  const selectedEvents = document.getElementById("selectedEvents");
-  const quoteText = document.getElementById("quoteText");
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqbHZ3cHRmcHlla25mZmNpdXlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNTE1NTQsImV4cCI6MjA5MjYyNzU1NH0.IkTStAFr90vOTiqaDzokyW22QuNY0hgmtwOTf_KBv_U";
 
-  let minutes = 25;
-  let secondsLeft = minutes * 60;
-  let interval = null;
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-  const quotes = [
-    "Marcus Aurelius: You have power over your mind, not outside events.",
-    "Seneca: We suffer more often in imagination than in reality.",
-    "Aristotle: Excellence is not an act, but a habit.",
-    "Plato: The beginning is the most important part of the work.",
-    "Epictetus: First say what you would be; then do what you have to do.",
-    "Lao Tzu: The journey of a thousand miles begins with one step."
-  ];
+let currentUser = null;
 
-  function getSessions() {
-    return JSON.parse(localStorage.getItem("seleneSessions")) || {};
+const authSection = document.getElementById("auth-section");
+const appSection = document.getElementById("app-section");
+const signOutBtn = document.getElementById("sign-out-btn");
+const authMessage = document.getElementById("auth-message");
+
+function showMessage(message) {
+  authMessage.textContent = message;
+}
+
+function showApp() {
+  authSection.classList.add("hidden");
+  appSection.classList.remove("hidden");
+  signOutBtn.classList.remove("hidden");
+}
+
+function showAuth() {
+  authSection.classList.remove("hidden");
+  appSection.classList.add("hidden");
+  signOutBtn.classList.add("hidden");
+}
+
+async function signUp() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    showMessage("Enter an email and password.");
+    return;
   }
 
-  function saveSessions(data) {
-    localStorage.setItem("seleneSessions", JSON.stringify(data));
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
   }
 
-  function todayKey() {
-    return new Date().toISOString().split("T")[0];
+  showMessage("Account created. Check your email to confirm it.");
+}
+
+async function signIn() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    showMessage("Enter your email and password.");
+    return;
   }
 
-  function formatTime(total) {
-    const m = Math.floor(total / 60);
-    const s = total % 60;
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
   }
 
-  function updateDisplay() {
-    timerDisplay.textContent = formatTime(secondsLeft);
+  currentUser = data.user;
+  showApp();
+  loadGoals();
+  loadEvents();
+}
+
+async function signOut() {
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  showAuth();
+}
+
+async function checkSession() {
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (data.session) {
+    currentUser = data.session.user;
+    showApp();
+    loadGoals();
+    loadEvents();
+  } else {
+    showAuth();
+  }
+}
+
+async function addGoal() {
+  const input = document.getElementById("goal-input");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  const { error } = await supabaseClient.from("goals").insert([
+    {
+      text,
+      user_id: currentUser.id,
+    },
+  ]);
+
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  function setTimer(newMinutes) {
-    clearInterval(interval);
-    interval = null;
-    minutes = Math.max(1, Number(newMinutes));
-    secondsLeft = minutes * 60;
-    minutesInput.value = minutes;
-    updateDisplay();
+  input.value = "";
+  loadGoals();
+}
+
+async function loadGoals() {
+  const { data, error } = await supabaseClient
+    .from("goals")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  function saveSession() {
-    const data = getSessions();
-    const key = todayKey();
+  const list = document.getElementById("goals-list");
+  list.innerHTML = "";
 
-    if (!data[key]) data[key] = [];
+  data.forEach((goal) => {
+    const li = document.createElement("li");
 
-    data[key].push({
-      goal: goalInput.value.trim() || "Focus session",
-      minutes: minutes
-    });
+    li.innerHTML = `
+      <div>${goal.text}</div>
+      <button class="delete-btn" onclick="deleteGoal('${goal.id}')">
+        Delete
+      </button>
+    `;
 
-    saveSessions(data);
-    buildCalendar();
+    list.appendChild(li);
+  });
+}
+
+async function deleteGoal(id) {
+  const { error } = await supabaseClient
+    .from("goals")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  function startTimer() {
-    if (interval) return;
+  loadGoals();
+}
 
-    interval = setInterval(() => {
-      if (secondsLeft > 0) {
-        secondsLeft--;
-        updateDisplay();
-      } else {
-        clearInterval(interval);
-        interval = null;
-        saveSession();
-        alert("Session complete. Saved to calendar.");
-      }
-    }, 1000);
+async function addEvent() {
+  const title = document.getElementById("event-title").value.trim();
+  const date = document.getElementById("event-date").value;
+  const description = document.getElementById("event-description").value.trim();
+
+  if (!title || !date) {
+    alert("Add an event title and date.");
+    return;
   }
 
-  function pauseTimer() {
-    clearInterval(interval);
-    interval = null;
+  const { error } = await supabaseClient.from("events").insert([
+    {
+      title,
+      event_date: date,
+      description,
+      user_id: currentUser.id,
+    },
+  ]);
+
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  function resetTimer() {
-    setTimer(minutesInput.value);
+  document.getElementById("event-title").value = "";
+  document.getElementById("event-date").value = "";
+  document.getElementById("event-description").value = "";
+
+  loadEvents();
+}
+
+async function loadEvents() {
+  const { data, error } = await supabaseClient
+    .from("events")
+    .select("*")
+    .order("event_date", { ascending: true });
+
+  if (error) {
+    alert(error.message);
+    return;
   }
 
-  function showDateInfo(key, label) {
-    const data = getSessions();
-    const sessions = data[key] || [];
+  const list = document.getElementById("events-list");
+  list.innerHTML = "";
 
-    selectedDateTitle.textContent = label;
-    selectedEvents.innerHTML = "";
+  data.forEach((event) => {
+    const li = document.createElement("li");
 
-    if (sessions.length === 0) {
-      selectedEvents.innerHTML = "<li>No events</li>";
-      return;
+    li.innerHTML = `
+      <div class="event-date">${event.event_date}</div>
+      <strong>${event.title}</strong>
+      <p>${event.description || ""}</p>
+      <button class="delete-btn" onclick="deleteEvent('${event.id}')">
+        Delete
+      </button>
+    `;
+
+    list.appendChild(li);
+  });
+}
+
+async function deleteEvent(id) {
+  const { error } = await supabaseClient
+    .from("events")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  loadEvents();
+}
+
+let timerSeconds = 25 * 60;
+let timerInterval = null;
+
+const timerDisplay = document.getElementById("timerDisplay");
+const timerMinutes = document.getElementById("timerMinutes");
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timerSeconds / 60);
+  const seconds = timerSeconds % 60;
+
+  timerDisplay.textContent =
+    String(minutes).padStart(2, "0") +
+    ":" +
+    String(seconds).padStart(2, "0");
+}
+
+function setTimerFromInput() {
+  const minutes = Number(timerMinutes.value);
+
+  if (minutes < 1) {
+    timerMinutes.value = 1;
+    timerSeconds = 60;
+  } else {
+    timerSeconds = minutes * 60;
+  }
+
+  updateTimerDisplay();
+}
+
+function startTimer() {
+  if (timerInterval) return;
+
+  timerInterval = setInterval(() => {
+    if (timerSeconds > 0) {
+      timerSeconds--;
+      updateTimerDisplay();
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      alert("Timer complete.");
     }
+  }, 1000);
+}
 
-    sessions.forEach(session => {
-      const li = document.createElement("li");
-      li.textContent = `${session.minutes} min — ${session.goal}`;
-      selectedEvents.appendChild(li);
-    });
-  }
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
 
-  function buildCalendar() {
-    calendarGrid.innerHTML = "";
+function resetTimer() {
+  pauseTimer();
+  setTimerFromInput();
+}
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const today = now.getDate();
+document.getElementById("sign-up-btn").addEventListener("click", signUp);
+document.getElementById("sign-in-btn").addEventListener("click", signIn);
+document.getElementById("sign-out-btn").addEventListener("click", signOut);
 
-    const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
+document.getElementById("add-goal-btn").addEventListener("click", addGoal);
+document.getElementById("add-event-btn").addEventListener("click", addEvent);
 
-    monthTitle.textContent = `${monthNames[month]} ${year}`;
+document.getElementById("startTimer").addEventListener("click", startTimer);
+document.getElementById("pauseTimer").addEventListener("click", pauseTimer);
+document.getElementById("resetTimer").addEventListener("click", resetTimer);
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const data = getSessions();
-
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement("div");
-      calendarGrid.appendChild(empty);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      const dateLabel = `${monthNames[month]} ${day}, ${year}`;
-
-      const div = document.createElement("button");
-      div.className = "day";
-      div.textContent = day;
-
-      if (day === today) div.classList.add("today");
-      if (data[key] && data[key].length) div.classList.add("has-session");
-
-      div.addEventListener("click", () => {
-        showDateInfo(key, dateLabel);
-      });
-
-      div.addEventListener("mouseenter", () => {
-        showDateInfo(key, dateLabel);
-      });
-
-      calendarGrid.appendChild(div);
-    }
-
-    const todayCalendarKey = todayKey();
-    showDateInfo(todayCalendarKey, `${monthNames[month]} ${today}, ${year}`);
-  }
-
-  function setQuote() {
-    const start = new Date(new Date().getFullYear(), 0, 0);
-    const day = Math.floor((new Date() - start) / 86400000);
-    quoteText.textContent = quotes[day % quotes.length];
-  }
-
-  document.getElementById("startBtn").addEventListener("click", startTimer);
-  document.getElementById("pauseBtn").addEventListener("click", pauseTimer);
-  document.getElementById("resetBtn").addEventListener("click", resetTimer);
-
-  document.getElementById("plusFive").addEventListener("click", () => {
-    setTimer(Number(minutesInput.value) + 5);
-  });
-
-  document.getElementById("minusFive").addEventListener("click", () => {
-    setTimer(Number(minutesInput.value) - 5);
-  });
-
-  minutesInput.addEventListener("change", () => {
-    setTimer(minutesInput.value);
-  });
-
-  goalInput.addEventListener("input", () => {
-    goalDisplay.textContent = goalInput.value.trim() || "Ready to focus?";
-  });
-
-  document.getElementById("calendarBtn").addEventListener("click", () => {
-    calendarPanel.classList.remove("hidden");
-    buildCalendar();
-  });
-
-  document.getElementById("closeCalendar").addEventListener("click", () => {
-    calendarPanel.classList.add("hidden");
-  });
-
-  updateDisplay();
-  buildCalendar();
-  setQuote();
+document.getElementById("plusFive").addEventListener("click", () => {
+  timerMinutes.value = Number(timerMinutes.value) + 5;
+  setTimerFromInput();
 });
+
+document.getElementById("minusFive").addEventListener("click", () => {
+  timerMinutes.value = Math.max(1, Number(timerMinutes.value) - 5);
+  setTimerFromInput();
+});
+
+timerMinutes.addEventListener("change", setTimerFromInput);
+
+checkSession();
